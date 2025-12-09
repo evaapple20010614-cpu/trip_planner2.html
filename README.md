@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -6,18 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        /* 保持 App 視覺一致性 */
+        /* 自定義 Tailwind 顏色或其他樣式 */
+        :root {
+            --color-primary: #3b82f6; /* blue-500 */
+        }
+        /* 隱藏地圖組件的滾動條，保持 App 視覺一致性 */
         .app-container {
             overflow: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100vh;
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
-<div id="app" class="app-container max-w-lg mx-auto shadow-2xl bg-white">
+<div id="app" class="app-container max-w-lg mx-auto shadow-2xl bg-white flex flex-col">
     <header class="p-4 border-b border-gray-100 shadow-sm bg-white sticky top-0 z-10">
         <h1 class="text-xl font-bold text-gray-800 flex items-center">
             <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -89,12 +92,7 @@
                         <div class="flex items-center space-x-3">
                             <span class="text-xl font-bold text-blue-500">{{ schedule.time }}</span>
                             <div>
-                                <a v-if="schedule.mapUrl" :href="schedule.mapUrl" target="_blank" class="font-semibold text-lg text-blue-600 hover:text-blue-800 transition-colors flex items-center">
-                                    {{ schedule.location }}
-                                    <svg class="w-4 h-4 ml-1 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                </a>
-                                <h3 v-else class="font-semibold text-lg text-gray-800">{{ schedule.location }}</h3>
-                                
+                                <h3 class="font-semibold text-lg text-gray-800">{{ schedule.location }}</h3>
                                 <p class="text-sm text-gray-500">{{ schedule.activity }}</p>
                             </div>
                         </div>
@@ -110,65 +108,22 @@
             </div>
         `,
         setup() {
-            // --------------------------------------------------------
-            // 🎯 已更新的行程數據 (根據您的輸入) 
-            // --------------------------------------------------------
-            const selectedDay = ref('Day 1 - 大阪市區精華')
-            const days = ['Day 1 - 大阪市區精華', 'Day 2 - 大阪環球影城', 'Day 3 - 奈良一日遊', 'Day 4 - 京都一日深度遊', 'Day 5 - 大阪收尾 + Outlet']
-            
+            const selectedDay = ref('Day 1 - 大阪')
+            const days = ['Day 1 - 大阪', 'Day 2 - 大阪', 'Day 3 - 京都', 'Day 4 - 奈良']
             const scheduleData = reactive([
-                // --- Day 1 | 大阪市區精華 ---
-                { day: 'Day 1 - 大阪市區精華', time: '早餐', location: 'パンの小屋 / 喫茶田園', activity: '現烤麵包/昭和風咖啡', mapUrl: '' },
-                { day: 'Day 1 - 大阪市區精華', time: '08:30', location: '天下茶屋 → 大阪城', activity: '搭乘電車 (約35分/¥280)', mapUrl: 'https://maps.google.com/?q=大阪城' },
-                { day: 'Day 1 - 大阪市區精華', time: '09:10', location: '大阪城 & 天守閣', activity: '參觀 (09:10-10:40)', mapUrl: '' },
-                { day: 'Day 1 - 大阪市區精華', time: '11:10', location: '大阪城 → 黑門市場', activity: '搭乘電車 (約25分/¥230)', mapUrl: 'https://maps.google.com/?q=黑門市場' },
-                { day: 'Day 1 - 大阪市區精華', time: '11:30', location: '黑門市場', activity: '午餐 (11:30-12:40)', mapUrl: '' },
-                { day: 'Day 1 - 大阪市區精華', time: '12:50', location: '日本橋筋商店街', activity: '散步購物 (12:50-14:30)', mapUrl: 'https://maps.google.com/?q=日本橋筋商店街' },
-                { day: 'Day 1 - 大阪市區精華', time: '14:40', location: '心齋橋 & 道頓堀', activity: '晚餐及逛街 (至22:00)', mapUrl: 'https://maps.google.com/?q=心齋橋' },
-                
-                // --- Day 2 | 大阪環球影城 (USJ) ---
-                { day: 'Day 2 - 大阪環球影城', time: '早餐', location: '麥當勞/便利商店', activity: '快速解決早餐', mapUrl: '' },
-                { day: 'Day 2 - 大阪環球影城', time: '07:30', location: '天下茶屋 → USJ', activity: '搭乘電車 (約45分/¥480)', mapUrl: 'https://maps.google.com/?q=USJ+環球影城' },
-                { day: 'Day 2 - 大阪環球影城', time: '08:30', location: 'USJ', activity: '全天遊玩 (Express Pass必買, 至19:00)', mapUrl: '' },
-                { day: 'Day 2 - 大阪環球影城', time: '19:30', location: 'USJ → 天下茶屋', activity: '搭乘電車 (約50分/¥480)', mapUrl: '' },
-                
-                // --- Day 3 | 奈良一日遊 ---
-                { day: 'Day 3 - 奈良一日遊', time: '早餐', location: '立ち食い烏龍麵 / パンの小屋', activity: '站內或外帶早餐', mapUrl: '' },
-                { day: 'Day 3 - 奈良一日遊', time: '08:00', location: '天下茶屋 → 近鐵奈良', activity: '搭乘電車 (約60分/¥640)', mapUrl: 'https://maps.google.com/?q=奈良公園' },
-                { day: 'Day 3 - 奈良一日遊', time: '09:10', location: '奈良公園 → 東大寺 → 春日大社', activity: '逛景點與餵鹿 (至12:00)', mapUrl: 'https://maps.google.com/?q=東大寺' },
-                { day: 'Day 3 - 奈良一日遊', time: '12:30', location: '奈良町', activity: '午餐 (和食或茶屋)', mapUrl: 'https://maps.google.com/?q=奈良町' },
-                { day: 'Day 3 - 奈良一日遊', time: '13:30', location: '奈良町', activity: '散步、買伴手禮 (至15:30)', mapUrl: '' },
-                { day: 'Day 3 - 奈良一日遊', time: '16:00', location: '近鐵奈良 → 天下茶屋', activity: '搭乘電車 (約60分/¥640)', mapUrl: '' },
-                
-                // --- Day 4 | 京都一日深度遊 ---
-                { day: 'Day 4 - 京都一日深度遊', time: '早餐', location: '志津屋 / 小川珈琲', activity: '雞蛋三明治或咖啡早餐', mapUrl: '' },
-                { day: 'Day 4 - 京都一日深度遊', time: '06:30', location: '天下茶屋 → 京都', activity: '搭乘電車 (約70分/¥1,000)', mapUrl: 'https://maps.google.com/?q=京都站' },
-                { day: 'Day 4 - 京都一日深度遊', time: '08:00', location: '伏見稻荷大社', activity: '參觀 (08:00-09:00)', mapUrl: 'https://maps.google.com/?q=伏見稻荷大社' },
-                { day: 'Day 4 - 京都一日深度遊', time: '09:30', location: '清水寺＋和服體驗', activity: '提前預約 (至12:00)', mapUrl: 'https://maps.google.com/?q=清水寺' },
-                { day: 'Day 4 - 京都一日深度遊', time: '12:15', location: '空禪寺', activity: '午餐 (需預約)', mapUrl: '' },
-                { day: 'Day 4 - 京都一日深度遊', time: '13:20', location: '二年坂、三年坂', activity: '散步 (至14:20)', mapUrl: 'https://maps.google.com/?q=二年坂' },
-                { day: 'Day 4 - 京都一日深度遊', time: '14:40', location: '祇園（花見小路）', activity: '參觀 (14:40-15:30)', mapUrl: 'https://maps.google.com/?q=祇園' },
-                { day: 'Day 4 - 京都一日深度遊', time: '15:40', location: '錦市場', activity: '逛街 (15:40-16:40)', mapUrl: 'https://maps.google.com/?q=錦市場' },
-                { day: 'Day 4 - 京都一日深度遊', time: '17:10', location: '金閣寺', activity: '參觀 (17:10-18:10)', mapUrl: 'https://maps.google.com/?q=金閣寺' },
-                { day: 'Day 4 - 京都一日深度遊', time: '19:00', location: '京都 → 天下茶屋', activity: '搭乘電車 (約90分/¥1,000)', mapUrl: '' },
-                
-                // --- Day 5 | 大阪收尾 + 臨空城Outlet ---
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '早餐', location: '喫茶Y / ドトールコーヒー', activity: '新世界或新今宮站早餐', mapUrl: '' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '08:30', location: '通天閣（新世界）', activity: '參觀 (08:30-10:30)', mapUrl: 'https://maps.google.com/?q=通天閣' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '11:00', location: '大阪上本町（近鐵百貨）', activity: '購物 (11:00-12:30)', mapUrl: 'https://maps.google.com/?q=大阪上本町' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '13:00', location: '天神橋筋商店街', activity: '散步購物 (13:00-14:30)', mapUrl: 'https://maps.google.com/?q=天神橋筋商店街' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '15:00', location: '天下茶屋 → 臨空城Outlet', activity: '搭乘電車 (約40分/¥930)', mapUrl: 'https://maps.google.com/?q=臨空城Outlet' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '15:40', location: '臨空城Outlet', activity: '購物 (至20:00)', mapUrl: '' },
-                { day: 'Day 5 - 大阪收尾 + Outlet', time: '20:00', location: '臨空城 → 關西機場', activity: '搭乘電車 (約10分/¥270)', mapUrl: 'https://maps.google.com/?q=關西機場' },
-            ]);
-            // --------------------------------------------------------
-            
+                { day: 'Day 1 - 大阪', time: '09:00', location: '關西機場 (KIX)', activity: '抵達、搭乘南海電鐵' },
+                { day: 'Day 1 - 大阪', time: '11:00', location: '大阪市區飯店', activity: 'Check-in & 寄放行李' },
+                { day: 'Day 2 - 大阪', time: '10:00', location: '大阪城', activity: '參觀天守閣與公園' },
+                { day: 'Day 3 - 京都', time: '08:00', location: '伏見稻荷大社', activity: '千本鳥居拍照' },
+                { day: 'Day 4 - 奈良', time: '13:00', location: '奈良公園', activity: '與小鹿互動' },
+            ])
+
             const filteredSchedule = computed(() => {
                 return scheduleData.filter(item => item.day === selectedDay.value)
             })
 
             const deleteItem = (index) => {
-                // 找出原始索引並刪除
+                // 在 filteredSchedule 中找到對應的原始索引並刪除
                 const itemToDelete = filteredSchedule.value[index];
                 const originalIndex = scheduleData.findIndex(item => 
                     item.day === itemToDelete.day && 
@@ -332,7 +287,7 @@
                     <div class="text-center text-gray-600">
                         <svg class="w-10 h-10 mx-auto mb-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.723A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2m9 18l5.447-2.723A1 1 0 0021 16.382V5.618a1 1 0 00-.553-.894L15 2m0 0l-1 1h-2l-1-1m0 0l-1 1H9l-1-1m4 0V2h2v4"></path></svg>
                         <p class="font-medium">地圖服務載入區</p>
-                        <p class="text-xs mt-1">模擬：顯示您行程中的地點</p>
+                        <p class="text-xs mt-1">模擬：大阪城 / 清水寺 / 奈良公園</p>
                     </div>
                 </div>
                 
@@ -340,11 +295,11 @@
                 <div class="space-y-3">
                     <button class="w-full text-left p-3 bg-white border-l-4 border-red-500 rounded-lg shadow hover:bg-red-50/50 transition-colors">
                         <p class="font-medium">🔴 前往 大阪城 (點擊模擬導航)</p>
-                        <p class="text-xs text-gray-500">Day 1 行程</p>
+                        <p class="text-xs text-gray-500">目前距離：約 4.5 km</p>
                     </button>
                     <button class="w-full text-left p-3 bg-white border-l-4 border-purple-500 rounded-lg shadow hover:bg-purple-50/50 transition-colors">
-                        <p class="font-medium">🟣 前往 伏見稻荷大社 (點擊模擬導航)</p>
-                        <p class="text-xs text-gray-500">Day 4 行程</p>
+                        <p class="font-medium">🟣 前往 清水寺 (點擊模擬導航)</p>
+                        <p class="text-xs text-gray-500">目前距離：約 28 km</p>
                     </button>
                 </div>
 
