@@ -1,4 +1,4 @@
-# trip_planner2.html
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
